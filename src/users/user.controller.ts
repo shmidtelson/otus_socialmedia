@@ -1,9 +1,10 @@
 import { Controller, Post, Get, Param, Body, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
 
+@ApiTags('user')
 @Controller('api/user')
 export class UserController {
   constructor(private userService: UserService) {}
