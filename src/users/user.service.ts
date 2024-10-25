@@ -27,7 +27,7 @@ export class UserService {
     }
   }
 
-  async findById(id: number): Promise<any> {
+  async findById(id: string): Promise<any> {
     const query = `SELECT * FROM users WHERE id = $1`;
     const client = await this.dbPool.connect();
     try {
