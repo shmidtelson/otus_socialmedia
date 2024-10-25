@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Pool } from 'pg';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PG_CONNECTION } from '../database/database.providers';
 
 @Injectable()
 export class UserService {
-  constructor(@Inject('PG_CONNECTION') private dbPool: Pool) {}
+  constructor(@Inject(PG_CONNECTION) private dbPool: Pool) {}
 
   async register(createUserDto: CreateUserDto): Promise<any> {
     const { firstName, lastName, birthDate, gender, interests, city } = createUserDto;

@@ -14,9 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nest-docker-postgres
-    environment:
-      - PORT=${PORT}
+    container_name: otus_app
     ports:
       - '3000:3000'
     depends_on:
@@ -27,7 +25,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     restart: always
-    container_name: nest-pgadmin4
+    container_name: otus_pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=pgadmin4
@@ -35,3 +33,9 @@ services:
       - '5050:80'
     depends_on:
       - db
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+
+volumes:
+  pgadmin:

@@ -1,21 +1,8 @@
 import { Module } from '@nestjs/common';
-import { Pool } from 'pg';
-
-const PG_CONNECTION = 'PG_CONNECTION';
-
-const dbProvider = {
-  provide: PG_CONNECTION,
-  useValue: new Pool({
-    user: 'postgres',
-    host: 'otus_postgres',
-    database: 'postgres',
-    password: 'postgres',
-    port: 5432,
-  }),
-};
+import { databaseProviders } from './database.providers';
 
 @Module({
-  providers: [dbProvider],
-  exports: [dbProvider],
+  providers: databaseProviders,
+  exports: databaseProviders,
 })
 export class DatabaseModule {}

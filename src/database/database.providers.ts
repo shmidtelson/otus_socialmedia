@@ -7,9 +7,9 @@ export const databaseProviders = [
     provide: PG_CONNECTION,
     useValue: new Pool({
       user: 'postgres',
-      host: 'localhost',
-      database: 'somedb',
-      password: 'meh',
+      host: 'otus_postgres',
+      database: 'postgres',
+      password: 'postgres',
       port: 5432,
     }),
   },
