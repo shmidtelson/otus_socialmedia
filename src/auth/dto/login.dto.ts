@@ -1,13 +1,16 @@
-import { IsString } from 'class-validator';
+import { IsEmpty, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LoginDto {
-  @IsString()
+export class UUID {
+  @IsUUID()
+  @IsNotEmpty()
   @ApiProperty({
-    example: '1',
+    example: '1caf2eba-5254-44df-ba9f-9c4ba3d4cb39',
   })
   id: string;
+}
 
+export class LoginDto extends UUID {
   @ApiProperty({
     example: '12345',
   })
