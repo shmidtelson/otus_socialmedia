@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres
-    restart: always
+    restart: on-failure
     environment:
       - POSTGRES_PASSWORD=postgres
     container_name: otus_postgres
@@ -14,6 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: on-failure
     container_name: otus_app
     ports:
       - '3000:3000'
@@ -24,7 +25,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    restart: always
+    restart: on-failure
     container_name: otus_pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
