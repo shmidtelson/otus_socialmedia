@@ -6,6 +6,8 @@ import {
   Body,
   NotFoundException,
   ParseUUIDPipe,
+  ClassSerializerInterceptor,
+  UseInterceptors,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -17,8 +19,9 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserDto } from './dto/user.dto';
+import { UserDto, UserEntity } from './dto/user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('user')
 @Controller('api/user')
@@ -39,10 +42,12 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'Invalid data' })
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('get/:id')
-  async getUser(@Param('id', ParseUUIDPipe) id: string) {
+  async getUser(@Param('id', ParseUUIDPipe) id: string): Promise<UserEntity> {
     const user = await this.userService.findById(id);
+
     if (!user) throw new NotFoundException('User not found!');
-    return user;
+    return new UserEntity(user);
   }
 }
