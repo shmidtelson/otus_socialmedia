@@ -12,9 +12,16 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
-    const user = await this.usersService.findById(loginDto.id);
+    const { id, firstName, lastName } = await this.usersService.findById(
+      loginDto.id,
+    );
+
     return {
-      access_token: this.jwtService.sign(user),
+      access_token: this.jwtService.sign({
+        id,
+        firstName,
+        lastName,
+      }),
     };
   }
 

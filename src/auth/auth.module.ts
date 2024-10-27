@@ -8,6 +8,7 @@ import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { UserService } from '../users/user.service';
 import { databaseProviders } from '../database/database.providers';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -26,5 +27,6 @@ import { databaseProviders } from '../database/database.providers';
     ...databaseProviders,
   ],
   exports: [AuthService],
+  controllers: [AuthController],
 })
 export class AuthModule {}
