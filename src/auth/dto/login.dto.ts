@@ -12,7 +12,7 @@ export class UUID {
 
 export class LoginDto extends UUID {
   @ApiProperty({
-    example: '12345',
+    example: '1234Abc!',
   })
   @IsString()
   password: string;

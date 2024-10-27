@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsDate, IsDateString, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -33,7 +41,7 @@ export class CreateUserDto {
   gender: string;
 
   @IsArray()
-  @IsString({ each: true })  // "each" tells class-validator to run the validation on each item of the array
+  @IsString({ each: true }) // "each" tells class-validator to run the validation on each item of the array
   @ApiProperty({
     example: ['Some interest'],
   })
@@ -46,4 +54,15 @@ export class CreateUserDto {
     example: 'Moscow',
   })
   city: string;
+
+  @IsString()
+  @MinLength(8)
+  @Matches(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+/, {
+    message:
+      'Password must contain at least one number, one uppercase letter, one lowercase letter, and one special character',
+  })
+  @ApiProperty({
+    example: '1234Abc!',
+  })
+  password: string;
 }

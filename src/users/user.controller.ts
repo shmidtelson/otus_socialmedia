@@ -1,8 +1,24 @@
-import { Controller, Post, Get, Param, Body, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  NotFoundException,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('user')
 @Controller('api/user')
@@ -22,9 +38,10 @@ export class UserController {
   @ApiOkResponse({ description: 'User', type: UserDto })
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'Invalid data' })
+  @UseGuards(JwtAuthGuard)
   @Get('get/:id')
   async getUser(@Param('id', ParseUUIDPipe) id: string) {
-    const user= await this.userService.findById(id);
+    const user = await this.userService.findById(id);
     if (!user) throw new NotFoundException('User not found!');
     return user;
   }
