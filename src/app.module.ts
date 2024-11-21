@@ -5,6 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PassportModule, UserModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    PassportModule,
+    UserModule,
+    AuthModule,
+  ],
 })
 export class AppModule {}

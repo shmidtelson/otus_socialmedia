@@ -1,8 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
-
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  ValidationPipe,
+} from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,20 +24,22 @@ async function bootstrap() {
     new ValidationPipe({
       exceptionFactory: (errors) => {
         const result = errors.map((error) => {
-          // Check if constraints are defined
           const constraints = error.constraints ? error.constraints : {};
 
           return {
-            property: error.property, // The property that failed validation
-            message: Object.values(constraints)[0] || 'Unknown validation error', // The first error message or a default message
+            property: error.property,
+            message:
+              Object.values(constraints)[0] || 'Unknown validation error',
           };
         });
-        // Return a BadRequestException with the structured result
         return new BadRequestException(result);
       },
       stopAtFirstError: true,
+      transform: true,
     }),
   );
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   await app.listen(process.env.PORT ?? 3000);
 }

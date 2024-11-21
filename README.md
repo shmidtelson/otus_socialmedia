@@ -1,7 +1,8 @@
 ## Как начать
 Запустить
-1. `docker compose up -d`
-2. Дождаться старта приложения
+1. `cp .env.example .env` - Создать .env
+2. `docker compose up -d`
+3. Дождаться старта приложения
 
 ## Описание
 * PgAdmin: `localhost:5050`
