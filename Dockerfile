@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:22
 
 WORKDIR /app
 
@@ -11,4 +11,6 @@ COPY . .
 RUN yarn build
 
 # Command to start the application in development mode
-CMD [ "yarn", "start:dev" ]
+#CMD [ "yarn", "start:dev" ]
+# Command to start the application in production mode
+CMD [ "yarn", "start:prod" ]

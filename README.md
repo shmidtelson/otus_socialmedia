@@ -5,5 +5,5 @@
 3. Дождаться старта приложения
 
 ## Описание
-* PgAdmin: `localhost:5050`
+* PgAdmin: `localhost:5050` (`admin@admin.com`:`pgadmin4`)
 * Бэкенд: `localhost:3000`

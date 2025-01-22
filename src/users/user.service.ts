@@ -76,7 +76,7 @@ export class UserService {
   }
 
   async search({ first_name, last_name }: SearchParams): Promise<UserDto[]> {
-    const query = `SELECT * FROM users WHERE first_name LIKE $1 and last_name LIKE $2`;
+    const query = `SELECT * FROM users WHERE first_name LIKE $1 and last_name LIKE $2 ORDER BY id LIMIT 10`;
     const client = await this.dbPool.connect();
     try {
       // Ensure wildcards are added for partial search.
