@@ -20,6 +20,8 @@ services:
       - db
     volumes:
       - ./src:/app/src
+    mem_limit: 4g
+    cpus: '2.0'
 
   pgadmin:
     image: dpage/pgadmin4
@@ -52,6 +54,7 @@ services:
       - GF_AUTH_BASIC_ENABLED=false
     volumes:
       - grafana:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana/
 
   k6:
     image: grafana/k6:latest
@@ -62,6 +65,8 @@ services:
     volumes:
       - ./.load-test/examples:/scripts
     command: run /scripts/script.js
+    mem_limit: 4g  # Limit memory to 4 GB
+    cpus: '2.0'  # Limit to 2 CPU cores
 
 volumes:
   pgadmin:

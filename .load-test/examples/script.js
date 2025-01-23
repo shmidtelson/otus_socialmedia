@@ -51,21 +51,21 @@ export let options = {
   //     timeUnit: '1s', // how long the given rate value will be applied
   //   },
   // },
-  // stages: [
-  //   { duration: '1m', target: 1 }, // 1 VU for 1 minute
-  //   { duration: '1m', target: 10 }, // Ramp-up to 10 VUs in 1 minute
-  //   { duration: '1m', target: 100 }, // Ramp-up to 100 VUs in 1 minute
-  //   { duration: '1m', target: 1000 }, // Ramp-up to 1000 VUs in 1 minute
-  // ],
   stages: [
-    { duration: '1m', target: 60 }, // 1 VU for 1 minute
-    { duration: '1m', target: 600 }, // Ramp-up to 10 VUs in 1 minute
-    { duration: '1m', target: 6000 }, // Ramp-up to 100 VUs in 1 minute
-    { duration: '1m', target: 60000 }, // Ramp-up to 1000 VUs in 1 minute
+    { duration: '1m', target: 1 }, // 1 VU for 1 minute
+    { duration: '1m', target: 10 }, // Ramp-up to 10 VUs in 1 minute
+    { duration: '1m', target: 100 }, // Ramp-up to 100 VUs in 1 minute
+    { duration: '1m', target: 1000 }, // Ramp-up to 1000 VUs in 1 minute
   ],
+  // stages: [
+  //   { duration: '1m', target: 60 }, // 1 VU for 1 minute
+  //   { duration: '1m', target: 600 }, // Ramp-up to 10 VUs in 1 minute
+  //   { duration: '1m', target: 6000 }, // Ramp-up to 100 VUs in 1 minute
+  //   { duration: '1m', target: 60000 }, // Ramp-up to 1000 VUs in 1 minute
+  // ],
   // thresholds: { http_req_duration: ['avg<150'] },
   // noConnectionReuse: true,
-  // summaryTrendStats: ['avg','min','max','count']
+  // summaryTrendStats: ['avg', 'min', 'max', 'count'],
 };
 
 export default function () {

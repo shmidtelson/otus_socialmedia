@@ -18,8 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "generate-users": "ts-node ./src/cli.ts generate-users",
-    "load-test": "artillery run --output test-run-report60.html ./artillery/load-test.yml"
+    "generate-users": "ts-node ./src/cli.ts generate-users"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
