@@ -21,42 +21,42 @@ function randomString(length) {
 
 // Configure the virtual users (VUs) and duration for the test
 export let options = {
-  // scenarios: {
-  //   scenario1: {
-  //     executor: 'constant-arrival-rate', // фиксированная частота запросов
-  //     duration: '1m', // продолжительность теста 1 минута
-  //     rate: 10, // количество запросов в секунду
-  //     preAllocatedVUs: 5, // максимальное количество виртуальных пользователей (VUs)
-  //     timeUnit: '1s', // частота запросов в секунду
-  //   },
-  //   scenario10: {
-  //     executor: 'constant-arrival-rate',
-  //     duration: '1m', // test duration
-  //     rate: 10, // requests to be made according to the TimeUnit we give
-  //     preAllocatedVUs: 5, // maximum VUs to be used for the given rate value in the test
-  //     timeUnit: '1s', // how long the given rate value will be applied
-  //   },
-  //   scenario100: {
-  //     executor: 'constant-arrival-rate',
-  //     duration: '1m', // test duration
-  //     rate: 100, // requests to be made according to the TimeUnit we give
-  //     preAllocatedVUs: 50, // maximum VUs to be used for the given rate value in the test
-  //     timeUnit: '1s', // how long the given rate value will be applied
-  //   },
-  //   scenario1000: {
-  //     executor: 'constant-arrival-rate',
-  //     duration: '1m', // test duration
-  //     rate: 1000, // requests to be made according to the TimeUnit we give
-  //     preAllocatedVUs: 500, // maximum VUs to be used for the given rate value in the test
-  //     timeUnit: '1s', // how long the given rate value will be applied
-  //   },
-  // },
-  stages: [
-    { duration: '1m', target: 1 }, // 1 VU for 1 minute
-    { duration: '1m', target: 10 }, // Ramp-up to 10 VUs in 1 minute
-    { duration: '1m', target: 100 }, // Ramp-up to 100 VUs in 1 minute
-    { duration: '1m', target: 1000 }, // Ramp-up to 1000 VUs in 1 minute
-  ],
+  scenarios: {
+    scenario1: {
+      executor: 'constant-arrival-rate', // фиксированная частота запросов
+      duration: '1m', // продолжительность теста 1 минута
+      rate: 10, // количество запросов в секунду
+      preAllocatedVUs: 5, // максимальное количество виртуальных пользователей (VUs)
+      timeUnit: '1s', // частота запросов в секунду
+    },
+    scenario10: {
+      executor: 'constant-arrival-rate',
+      duration: '1m', // test duration
+      rate: 10, // requests to be made according to the TimeUnit we give
+      preAllocatedVUs: 5, // maximum VUs to be used for the given rate value in the test
+      timeUnit: '1s', // how long the given rate value will be applied
+    },
+    scenario100: {
+      executor: 'constant-arrival-rate',
+      duration: '1m', // test duration
+      rate: 100, // requests to be made according to the TimeUnit we give
+      preAllocatedVUs: 50, // maximum VUs to be used for the given rate value in the test
+      timeUnit: '1s', // how long the given rate value will be applied
+    },
+    scenario1000: {
+      executor: 'constant-arrival-rate',
+      duration: '1m', // test duration
+      rate: 1000, // requests to be made according to the TimeUnit we give
+      preAllocatedVUs: 500, // maximum VUs to be used for the given rate value in the test
+      timeUnit: '1s', // how long the given rate value will be applied
+    },
+  },
+  // stages: [
+  //   { duration: '1m', target: 1 }, // 1 VU for 1 minute
+  //   { duration: '1m', target: 10 }, // Ramp-up to 10 VUs in 1 minute
+  //   { duration: '1m', target: 100 }, // Ramp-up to 100 VUs in 1 minute
+  //   { duration: '1m', target: 1000 }, // Ramp-up to 1000 VUs in 1 minute
+  // ],
   // stages: [
   //   { duration: '1m', target: 60 }, // 1 VU for 1 minute
   //   { duration: '1m', target: 600 }, // Ramp-up to 10 VUs in 1 minute
@@ -81,10 +81,10 @@ export default function () {
   responseTime.add(res.timings.duration);
 
   // Check if the response status is 200
-  // check(res, {
-  // 'status is 200': (r) => r.status === 200,
-  // 'response time is acceptable': (r) => r.timings.duration < 2000, // Less than 2 seconds
-  // });
+  check(res, {
+    'status is 200': (r) => r.status === 200,
+    'response time is acceptable': (r) => r.timings.duration < 2000, // Less than 2 seconds
+  });
 
   // Simulate user think time (time between requests)
   //   check(res, {

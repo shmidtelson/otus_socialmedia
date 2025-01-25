@@ -80,8 +80,8 @@ export class UserService {
     const client = await this.dbPool.connect();
     try {
       // Ensure wildcards are added for partial search.
-      const searchFirstName = `%${first_name}%`;
-      const searchLastName = `%${last_name}%`;
+      const searchFirstName = `${first_name}%`;
+      const searchLastName = `${last_name}%`;
 
       const result = await client.query(query, [
         searchFirstName,

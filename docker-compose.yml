@@ -1,13 +1,39 @@
 services:
   db:
-    image: postgres
+    build:
+      context: ./.Docker/postgres
     environment:
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: trust
     container_name: otus_postgres
     volumes:
       - ./.Docker/postgres/initdb/:/docker-entrypoint-initdb.d/
+      - postgres_data_primary:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+
+  postgres_slave_1:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data_slave_1:/var/lib/postgresql/data
+      - ./.Docker/postgres/revovery.conf:/var/lib/postgresql/data/pgdata/recovery.conf
+    restart: always
+
+  postgres_slave_2:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data_slave_2:/var/lib/postgresql/data
+      - ./.Docker/postgres/revovery.conf:/var/lib/postgresql/data/pgdata/recovery.conf
+    restart: always
 
   app:
     build:
@@ -27,14 +53,17 @@ services:
     image: dpage/pgadmin4
     container_name: otus_pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=pgadmin4
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin4
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     ports:
       - '5050:80'
     depends_on:
       - db
     volumes:
       - pgadmin:/var/lib/pgadmin
+      - ./.Docker/pgadmin/servers.json:/pgadmin4/servers.json
 
   # load testing
   influxdb:
@@ -45,7 +74,9 @@ services:
       - INFLUXDB_DB=k6
 
   grafana:
-    image: grafana/grafana:9.3.8
+    image: grafana/grafana:latest
+    links:
+      - prometheus:prometheus
     ports:
       - "3001:3000"
     environment:
@@ -53,8 +84,10 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
     volumes:
-      - grafana:/etc/grafana/provisioning/
-      - grafana:/var/lib/grafana/
+#      - grafana:/var/lib/grafana/
+      - ./.Docker/grafana/dashboards:/etc/grafana/provisioning/dashboards   # Provision dashboards
+      - ./.Docker/grafana/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./.Docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml  # Datasource configuration file
 
   k6:
     image: grafana/k6:latest
@@ -68,6 +101,45 @@ services:
     mem_limit: 4g  # Limit memory to 4 GB
     cpus: '2.0'  # Limit to 2 CPU cores
 
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./.Docker/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - prometheus:/prometheus
+    privileged: true
+    depends_on:
+      - cadvisor
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter
+    restart: unless-stopped
+    expose:
+      - 9100
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
+    hostname: cadvisor
+    privileged: true
+    platform: linux/amd64
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:ro"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+      - "/dev/disk/:/dev/disk:ro"
+      - "/etc/machine-id:/etc/machine-id:ro"
+      - "/dev/kmsg:/dev/kmsg"
+    ports:
+      - "8080:8080"
+
 volumes:
   pgadmin:
-  grafana:
+#  grafana:
+  postgres_data_primary:
+  postgres_data_slave_1:
+  postgres_data_slave_2:
+  prometheus:
