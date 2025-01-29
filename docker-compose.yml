@@ -12,6 +12,11 @@ services:
       - postgres_data_primary:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres_slave_1:
     image: postgres
@@ -21,8 +26,14 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data_slave_1:/var/lib/postgresql/data
-      - ./.Docker/postgres/revovery.conf:/var/lib/postgresql/data/pgdata/recovery.conf
-    restart: always
+      - ./.Docker/postgres/slave-init:/docker-entrypoint-initdb.d
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres_slave_2:
     image: postgres
@@ -32,8 +43,14 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data_slave_2:/var/lib/postgresql/data
-      - ./.Docker/postgres/revovery.conf:/var/lib/postgresql/data/pgdata/recovery.conf
-    restart: always
+      - ./.Docker/postgres/slave-init:/docker-entrypoint-initdb.d
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build:
@@ -61,6 +78,8 @@ services:
       - '5050:80'
     depends_on:
       - db
+      - postgres_slave_1
+      - postgres_slave_2
     volumes:
       - pgadmin:/var/lib/pgadmin
       - ./.Docker/pgadmin/servers.json:/pgadmin4/servers.json
@@ -116,7 +135,6 @@ services:
   node-exporter:
     image: prom/node-exporter:latest
     container_name: monitoring_node_exporter
-    restart: unless-stopped
     expose:
       - 9100
 
