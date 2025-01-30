@@ -23,24 +23,30 @@ export const databaseProviders = [
     provide: PG_READ_REPLICA_CONNECTION,
     inject: [ConfigService],
     useFactory: (configService: ConfigService) => {
-      const hosts = configService
-        .get<string>('PG_READ_REPLICA_HOST', '')
-        .split(',');
-      const user = configService.get<string>(
-        'PG_READ_REPLICA_USER',
-        'replicator_user',
-      );
+      const hosts = [
+        {
+          host: configService.get<string>('PG_READ_REPLICA_HOST1', ''),
+          port: configService.get<number>('PG_READ_REPLICA_PORT1', 5432),
+          user: configService.get<string>('PG_READ_REPLICA_USER1', ''),
+        },
+        {
+          host: configService.get<string>('PG_READ_REPLICA_HOST2', ''),
+          port: configService.get<number>('PG_READ_REPLICA_PORT2', 5432),
+          user: configService.get<string>('PG_READ_REPLICA_USER2', ''),
+        },
+      ];
+
       const password = configService.get<string>('PG_READ_REPLICA_PASS', '');
 
       // Create multiple replica pools
       return hosts.map(
-        (host) =>
+        ({ host, port, user }) =>
           new Pool({
             user,
             host,
             database: configService.get<string>('PG_DB', 'postgres'),
             password,
-            port: configService.get<number>('PG_PORT', 5432),
+            port,
           }),
       );
     },

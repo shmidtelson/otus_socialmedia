@@ -6,7 +6,7 @@ import { Trend } from 'k6/metrics';
 let responseTime = new Trend('response_time');
 
 // Parameters for your test
-const url = 'http://otus_app:3000/api/user/search'; // Change this to your search endpoint
+const url = 'http://app:3000/api/user/search'; // Change this to your search endpoint
 
 function randomString(length) {
   const characters =

@@ -57,16 +57,16 @@ export class UserService {
 
     const result = await this.databaseService.readQuery(query, [id]);
     return {
-      id: result.rows[0].id,
-      firstName: result.rows[0].first_name,
-      lastName: result.rows[0].last_name,
-      birthDate: result.rows[0].birth_date
-        ? result.rows[0].birth_date.toISOString().split('T')[0]
+      id: result[0].id,
+      firstName: result[0].first_name,
+      lastName: result[0].last_name,
+      birthDate: result[0].birth_date
+        ? result[0].birth_date.toISOString().split('T')[0]
         : null,
-      gender: result.rows[0].gender,
-      interests: result.rows[0].interests,
-      city: result.rows[0].city,
-      password: result.rows[0].password,
+      gender: result[0].gender,
+      interests: result[0].interests,
+      city: result[0].city,
+      password: result[0].password,
     };
   }
 
@@ -84,7 +84,7 @@ export class UserService {
       ]);
 
       // Map results to the desired format
-      return result.rows.map((row: any) => ({
+      return result.map((row: any) => ({
         id: row.id,
         firstName: row.first_name,
         lastName: row.last_name,

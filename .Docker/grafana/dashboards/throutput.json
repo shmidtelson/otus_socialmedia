@@ -162,6 +162,8 @@
           "measurement": "http_reqs",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT sum(\"value\") FROM \"http_reqs\" WHERE $timeFilter GROUP BY time(10s) fill(null)",
+          "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -174,7 +176,7 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "sum"
               }
             ]
           ],
@@ -229,8 +231,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -263,11 +264,12 @@
       "pluginVersion": "11.4.0",
       "targets": [
         {
+          "alias": "Latency (Duration)",
           "datasource": "InfluxDB",
           "groupBy": [
             {
               "params": [
-                "1s"
+                "$__interval"
               ],
               "type": "time"
             },
@@ -300,11 +302,12 @@
           "tags": []
         },
         {
+          "alias": "Latency 95",
           "datasource": "InfluxDB",
           "groupBy": [
             {
               "params": [
-                "1s"
+                "$__interval"
               ],
               "type": "time"
             },
@@ -340,11 +343,12 @@
           "tags": []
         },
         {
+          "alias": "Latency 95",
           "datasource": "InfluxDB",
           "groupBy": [
             {
               "params": [
-                "1s"
+                "$__interval"
               ],
               "type": "time"
             },
@@ -371,7 +375,7 @@
               },
               {
                 "params": [
-                  "99"
+                  95
                 ],
                 "type": "percentile"
               }
@@ -399,6 +403,6 @@
   "timezone": "",
   "title": "New dashboard",
   "uid": "I6jKXcONk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

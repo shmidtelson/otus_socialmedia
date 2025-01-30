@@ -29,6 +29,8 @@ services:
       - ./.Docker/postgres/slave-init:/docker-entrypoint-initdb.d
     depends_on:
       - db
+    ports:
+      - '5433:5432'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -46,6 +48,8 @@ services:
       - ./.Docker/postgres/slave-init:/docker-entrypoint-initdb.d
     depends_on:
       - db
+    ports:
+      - '5434:5432'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
