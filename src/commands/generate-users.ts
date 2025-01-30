@@ -1,5 +1,5 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { UserService } from '../users/users-generator.service';
+import { UsersGeneratorService } from '../users/users-generator.service';
 
 @Command({
   name: 'generate-users',
@@ -7,7 +7,7 @@ import { UserService } from '../users/users-generator.service';
   description: 'Generate users with a given task',
 })
 export class CommandTutorial extends CommandRunner {
-  constructor(private readonly userService: UserService) {
+  constructor(private readonly userService: UsersGeneratorService) {
     super();
   }
 

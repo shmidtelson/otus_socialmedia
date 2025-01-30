@@ -1,9 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Pool } from 'pg';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { PG_CONNECTION } from '../database/database.providers';
 import * as bcrypt from 'bcrypt';
 import { UserDto } from './dto/user.dto';
+import { DatabaseService } from '../database/database.service';
 
 type SearchParams = {
   first_name: string;
@@ -12,7 +11,7 @@ type SearchParams = {
 
 @Injectable()
 export class UserService {
-  constructor(@Inject(PG_CONNECTION) private dbPool: Pool) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async register(createUserDto: CreateUserDto): Promise<any> {
     const {
@@ -43,53 +42,49 @@ export class UserService {
       city,
       hashedPassword,
     ];
-    const client = await this.dbPool.connect();
+
     try {
-      const result = await client.query(query, values);
-      return result.rows[0]; // Return the newly created user
-    } finally {
-      client.release();
+      // Use the databaseService to execute the write query
+      await this.databaseService.writeQuery(query, values);
+    } catch (err) {
+      console.error('Error inserting users:', err);
+      throw err;
     }
   }
 
   async findById(id: string): Promise<UserDto> {
     const query = `SELECT * FROM users WHERE id = $1`;
-    const client = await this.dbPool.connect();
-    try {
-      const result = await client.query(query, [id]);
 
-      return {
-        id: result.rows[0].id,
-        firstName: result.rows[0].first_name,
-        lastName: result.rows[0].last_name,
-        birthDate: result.rows[0].birth_date
-          ? result.rows[0].birth_date.toISOString().split('T')[0]
-          : null,
-        gender: result.rows[0].gender,
-        interests: result.rows[0].interests,
-        city: result.rows[0].city,
-        password: result.rows[0].password,
-      };
-    } finally {
-      client.release();
-    }
+    const result = await this.databaseService.readQuery(query, [id]);
+    return {
+      id: result.rows[0].id,
+      firstName: result.rows[0].first_name,
+      lastName: result.rows[0].last_name,
+      birthDate: result.rows[0].birth_date
+        ? result.rows[0].birth_date.toISOString().split('T')[0]
+        : null,
+      gender: result.rows[0].gender,
+      interests: result.rows[0].interests,
+      city: result.rows[0].city,
+      password: result.rows[0].password,
+    };
   }
 
   async search({ first_name, last_name }: SearchParams): Promise<UserDto[]> {
     const query = `SELECT * FROM users WHERE first_name LIKE $1 and last_name LIKE $2 ORDER BY id LIMIT 10`;
-    const client = await this.dbPool.connect();
+
     try {
       // Ensure wildcards are added for partial search.
       const searchFirstName = `${first_name}%`;
       const searchLastName = `${last_name}%`;
 
-      const result = await client.query(query, [
+      const result = await this.databaseService.readQuery(query, [
         searchFirstName,
         searchLastName,
       ]);
 
       // Map results to the desired format
-      return result.rows.map((row) => ({
+      return result.rows.map((row: any) => ({
         id: row.id,
         firstName: row.first_name,
         lastName: row.last_name,
@@ -104,8 +99,6 @@ export class UserService {
     } catch (error) {
       console.error('Database query error:', error);
       throw new Error('An error occurred while searching for users');
-    } finally {
-      client.release();
     }
   }
 }
