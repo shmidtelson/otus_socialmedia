@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Pool } from 'pg';
-import { PG_CONNECTION } from '../database/database.providers';
+import { Injectable } from '@nestjs/common';
+
 import { faker } from '@faker-js/faker';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
-export class UserService {
-  constructor(@Inject(PG_CONNECTION) private dbPool: Pool) {}
+export class UsersGeneratorService {
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async generateUsers(batchSize: number = 1000, totalUsers: number = 1000000) {
     try {
@@ -65,12 +65,12 @@ export class UserService {
       user.password,
     ]);
 
-    const client = await this.dbPool.connect();
     try {
-      // Выполняем запрос
-      await client.query(query, values);
-    } finally {
-      client.release();
+      // Use the databaseService to execute the write query
+      await this.databaseService.writeQuery(query, values);
+    } catch (err) {
+      console.error('Error inserting users:', err);
+      throw err;
     }
   }
 }
