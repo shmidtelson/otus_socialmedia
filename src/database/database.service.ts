@@ -43,12 +43,16 @@ export class DatabaseService {
 
   // Execute a write query using the primary database
   async writeQuery(query: string, params: any[] = []): Promise<any> {
+    const client = await this.primaryPool.connect();
+
     try {
-      const result = await this.primaryPool.query(query, params);
+      const result = await client.query(query, params);
       return result.rows;
     } catch (error) {
       console.error('Primary write query failed:', error);
       throw error;
+    } finally {
+      client.release();
     }
   }
 }

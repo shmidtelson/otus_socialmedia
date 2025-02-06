@@ -7,6 +7,7 @@ let responseTime = new Trend('response_time');
 
 // Parameters for your test
 const url = 'http://app:3000/api/user/search'; // Change this to your search endpoint
+const writeUrl = 'http://app:3000/api/user/register';
 
 function randomString(length) {
   const characters =
@@ -69,25 +70,43 @@ export let options = {
 };
 
 export default function () {
-  let firstName = randomString(8); // Generate a random string of 8 characters for first name
+  let firstName = randomString(8);
   let lastName = randomString(10);
 
-  let urlPath = `${url}?first_name=${firstName}&last_name=${lastName}`;
+  let searchRes = http.get(
+    `${url}?first_name=${firstName}&last_name=${lastName}`,
+  );
+  responseTime.add(searchRes.timings.duration);
 
-  // Perform a search request
-  let res = http.get(`${urlPath}`);
-
-  // Track response time
-  responseTime.add(res.timings.duration);
-
-  // Check if the response status is 200
-  check(res, {
-    'status is 200': (r) => r.status === 200,
-    'response time is acceptable': (r) => r.timings.duration < 2000, // Less than 2 seconds
+  check(searchRes, {
+    'search status is 200': (r) => r.status === 200,
+    'search response time < 2s': (r) => r.timings.duration < 2000,
   });
 
-  // Simulate user think time (time between requests)
-  //   check(res, {
-  //       'is status 200': (r) => r.status == 200,
-  //   });
+  let payload = JSON.stringify({
+    firstName: 'John',
+    lastName: 'Doe',
+    birthDate: '1970-01-01',
+    gender: 'male',
+    interests: ['Some interest'],
+    city: 'Moscow',
+    password: '1234Abc!',
+  });
+
+  let params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  let registerRes = http.post(writeUrl, payload, params);
+
+  responseTime.add(registerRes.timings.duration);
+
+  check(registerRes, {
+    'register status is 200': (r) => r.status === 200,
+    'register response time < 2s': (r) => r.timings.duration < 2000,
+  });
+
+  sleep(1);
 }
